@@ -8,14 +8,17 @@ class App:
         self.master = master
         self.delay = 5.0
         master.title("Game Automation")
-        tk.Label(master, text="Delay (in seconds):").grid(row=0, column=0)
+        
+        tk.Label(master, text="Delay (in seconds):").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        
         self.delay_entry = tk.Entry(master)
-        self.delay_entry.grid(row=0, column=1)
+        self.delay_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W)
         self.delay_entry.insert(0, str(self.delay))
-        tk.Button(master, text="Save", command=self.save_delay).grid(row=1, column=1)
-        tk.Button(master, text="Start", command=self.start_automation).grid(row=2, column=0)
-        tk.Button(master, text="Stop", command=self.stop_automation).grid(row=2, column=1)
-        tk.Button(master, text="Quit", command=self.quit).grid(row=2, column=2)
+        
+        tk.Button(master, text="Save", command=self.save_delay).grid(row=0, column=2, padx=5, pady=5, sticky=tk.W)
+        tk.Button(master, text="Start", command=self.start_automation).grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
+        tk.Button(master, text="Stop", command=self.stop_automation).grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
+        tk.Button(master, text="Quit", command=self.quit).grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
 
     def start_automation(self):
         self.is_running = True
