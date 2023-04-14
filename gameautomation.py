@@ -1,56 +1,88 @@
 import time
 import pyautogui
 import tkinter as tk
-import os
 
 class App:
     def __init__(self, master):
         self.master = master
-        self.delay = 5.0
         master.title("Game Automation")
-        
-        tk.Label(master, text="Delay (in seconds):").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
-        
-        self.delay_entry = tk.Entry(master)
-        self.delay_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W)
-        self.delay_entry.insert(0, str(self.delay))
-        
-        tk.Button(master, text="Save", command=self.save_delay).grid(row=0, column=2, padx=5, pady=5, sticky=tk.W)
-        tk.Button(master, text="Start", command=self.start_automation).grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
-        tk.Button(master, text="Stop", command=self.stop_automation).grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
-        tk.Button(master, text="Quit", command=self.quit).grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
 
-    def start_automation(self):
-        self.is_running = True
-        while self.is_running:
-            pyautogui.click(pyautogui.position())
-            time.sleep(self.delay)
+        # Load the delay from a file or use default value
+        try:
+            with open("delay.txt", "r") as f:
+                delay = float(f.read())
+        except FileNotFoundError:
+            delay = 2.5
 
-    def stop_automation(self):
-        self.is_running = False
+        # Load the click position from a file or use default value
+        try:
+            with open("position.txt", "r") as f:
+                position = tuple(map(int, f.read().split(',')))
+        except FileNotFoundError:
+            position = (500, 500)
 
-    def save_delay(self):
-        self.delay = float(self.delay_entry.get())
-        with open("delay.txt", "w") as f:
-            f.write(str(self.delay))
+        self.delay_label = tk.Label(master, text="Delay:")
+        self.delay_label.grid(row=0, column=0)
 
-    def quit(self):
-        # Save the delay to a file
-        with open("delay.txt", "w") as f:
-            f.write(str(self.delay))
-        self.master.destroy()
+        self.delay_entry = tk.Entry(master, width=10)
+        self.delay_entry.insert(0, delay)
+        self.delay_entry.grid(row=0, column=1)
 
-if __name__ == '__main__':
-    # Load the delay from a file
-    if os.path.exists("delay.txt"):
-        with open("delay.txt", "r") as f:
-            delay = float(f.read())
-    else:
-        delay = 5.0
+        self.position_label = tk.Label(master, text="Position (x,y):")
+        self.position_label.grid(row=0, column=2)
+
+        self.position_entry = tk.Entry(master, width=20)
+        self.position_entry.insert(0, position)
+        self.position_entry.grid(row=0, column=3)
+
+        self.save_button = tk.Button(master, text="Save", command=self.save)
+        self.save_button.grid(row=0, column=4)
+
+        self.start_button = tk.Button(master, text="Start", command=self.start)
+        self.start_button.grid(row=0, column=5)
+
+        self.quit_button = tk.Button(master, text="Quit", command=self.quit_script)
+        self.quit_button.grid(row=0, column=6)
+
+    def save(self):
+        delay = float(self.delay_entry.get())
+        position = tuple(map(int, self.position_entry.get().split(',')))
+
         with open("delay.txt", "w") as f:
             f.write(str(delay))
 
-    # Create the GUI
+        with open("position.txt", "w") as f:
+            f.write("{},{}".format(position[0], position[1]))
+
+    def start(self):
+        # Load the delay from a file or use default value
+        try:
+            with open("delay.txt", "r") as f:
+                delay = float(f.read())
+        except FileNotFoundError:
+            delay = 2.5
+
+        # Load the click position from a file or use default value
+        try:
+            with open("position.txt", "r") as f:
+                position = tuple(map(int, f.read().split(',')))
+        except FileNotFoundError:
+            position = (500, 500)
+
+        # Click at the specified position
+        pyautogui.click(position)
+
+        # Wait for the specified delay
+        time.sleep(delay)
+
+        # Click again at the same position
+        pyautogui.click(position)
+
+    def quit_script(self):
+        self.save()
+        self.master.destroy()
+
+if __name__ == '__main__':
     root = tk.Tk()
     app = App(root)
     root.mainloop()
