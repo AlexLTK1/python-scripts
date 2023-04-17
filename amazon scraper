@@ -1,0 +1,27 @@
+import requests
+from bs4 import BeautifulSoup
+import csv
+
+# Specify the Amazon URL for the desired category
+url = 'https://www.amazon.com/best-sellers-books-Amazon/zgbs/books/'
+
+# Send a request to the URL and get the HTML content of the page
+response = requests.get(url)
+content = response.content
+
+# Parse the HTML content using BeautifulSoup
+soup = BeautifulSoup(content, 'html.parser')
+
+# Find the top 5 books in the category and extract their title and price
+books = soup.find_all('div', {'class': 'a-section a-spacing-none aok-relative'})
+
+# Store the data in a CSV file
+with open('amazon_books.csv', mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(['Title', 'Price'])
+    for book in books[:5]:
+        title = book.find('span', {'class': 'zg-text-center-align'}).text.strip()
+        price = book.find('span', {'class': 'p13n-sc-price'}).text.strip()
+        writer.writerow([title, price])
+        
+print('Data has been successfully saved to amazon_books.csv')
