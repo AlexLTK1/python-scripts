@@ -17,7 +17,7 @@ def tesseract_ocr(image):
 
 def start_capture(duration):
     # List of names to search for (including Chinese names)
-    names_to_search = ["张三", "李四", "王五", "赵六", "陳小明", "林美玲", "王大明", "黃小芳"]
+    names_to_search = ["在舒恩裡面卍解", " "]
 
     # Start the screen capture
     start_time = time.time()
